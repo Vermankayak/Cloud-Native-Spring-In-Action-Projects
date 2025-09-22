@@ -24,6 +24,12 @@ jobs:
           repository: Vermankayak/cloud-native-spring-in-action-config-repo
           path: config-repo
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
       - name: Build Config Server
         working-directory: config-repo
         run: ./gradlew build -x test
