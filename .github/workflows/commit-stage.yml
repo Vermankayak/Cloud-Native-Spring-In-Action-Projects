@@ -17,6 +17,36 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
+      # ---- Start Config Server ----
+      - name: Checkout Config Server repo
+        uses: actions/checkout@v4
+        with:
+          repository: Vermankayak/cloud-native-spring-in-action-config-repo
+          path: config-repo
+
+      - name: Build Config Server
+        working-directory: config-repo
+        run: ./gradlew build -x test
+
+      - name: Run Config Server in background
+        working-directory: config-repo
+        run: |
+          nohup java -jar build/libs/cloud-native-spring-in-action-config-repo-0.0.1-SNAPSHOT.jar --server.port=8888 > config.log 2>&1 &
+
+      - name: Wait for Config Server to be UP
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:8888/actuator/health | grep '"status":"UP"' > /dev/null; then
+              echo "Config Server is up!"
+              exit 0
+            fi
+            echo "Waiting for Config Server..."
+            sleep 5
+          done
+          echo "Config Server failed to start"
+          exit 1
+
+      # ---- Run catalog-service tests ----
       - name: Build, unit tests and integration tests
         run: |
           chmod +x gradlew
