@@ -40,6 +40,7 @@ jobs:
           nohup java -jar build/libs/*SNAPSHOT.jar --server.port=8888 > config.log 2>&1 &
 
       - name: Wait for Config Server to be UP
+        id: wait_for_config
         run: |
           for i in {1..30}; do
             if curl -s http://localhost:8888/actuator/health | grep '"status":"UP"' > /dev/null; then
@@ -51,6 +52,12 @@ jobs:
           done
           echo "Config Server failed to start"
           exit 1
+
+      - name: Display Config Server logs on failure
+        if: failure() && steps.wait_for_config.outcome == 'failure'
+        run: |
+          echo "--- Displaying Config Server logs ---"
+          cat config-repo/config.log     
 
       # ---- Run catalog-service tests ----
       - name: Build, unit tests and integration tests
