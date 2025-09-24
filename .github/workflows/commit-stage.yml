@@ -103,7 +103,7 @@ jobs:
       - name: Build container image
         run: |
           chmod +x gradlew
-          ./gradlew bootBuildImage --imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          ./gradlew bootBuildImage --imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
       - name: OCI image vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
@@ -124,4 +124,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish container image
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
