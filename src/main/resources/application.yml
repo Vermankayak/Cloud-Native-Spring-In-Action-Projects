@@ -1,0 +1,91 @@
+info:
+  system: "Polar Bookshop"
+
+spring:
+  application:
+    name: catalog-service
+  profiles:
+    active: prod
+  cloud:
+    config:
+      uri: "http://localhost:8888"
+      enabled: false
+      request-connect-timeout: 5000
+      request-read-timeout: 5000
+      fail-fast: true
+      retry:
+        max-attempts: 6
+        initial-interval: 1000
+        multiplier: 1.1
+        max-interval: 2000
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:8080/realms/PolarBookshop"
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/polardb_catalog"
+    username: user
+    password: password
+
+server:
+  port: 9001
+  shutdown: graceful
+  tomcat:
+    connection-timeout: "2s"
+    keep-alive-timeout: "15s"
+    threads:
+      max: 50
+      min-spare: 5
+
+polar:
+  greeting: "Welcome to the Catalog Service!"
+  testData: "enabled"
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.cloud.config.client: DEBUG
+    org.springframework.retry: TRACE
+    "org.springframework.security.web.access.intercept.FilterSecurityInterceptor": DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus
+          - flyway
+          - info
+          - heapdump
+  endpoint:
+    heapdump:
+      enabled: true
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include:
+            - readinessState
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+  metrics:
+    tags:
+      application: "${spring.application.name}"
+
+hikari:
+  connection-timeout: 2000
+  maximum-pool-size: 10
