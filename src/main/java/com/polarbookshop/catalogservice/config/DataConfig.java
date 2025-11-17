@@ -16,7 +16,7 @@ public class DataConfig {
 
     @Bean
     AuditorAware<String> auditorAware(){
-        //I am
+
         return () -> Optional.ofNullable(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)
                 .filter(Authentication::isAuthenticated)
