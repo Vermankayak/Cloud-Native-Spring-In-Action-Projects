@@ -10,8 +10,8 @@ concurrency: acceptance
 env:
   OWNER: vermankayak
   REGISTRY: ghcr.io
-  APP_REPO: catalog-service
-  DEPLOY_REPO: polar-deployment
+  APP_REPO: Cloud-Native-Spring-In-Action-Projects
+  DEPLOY_REPO: Cloud-Native-Spring-In-Action-Polar-Deployment
   VERSION: ${{ github.sha }}
 
 jobs:
